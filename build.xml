@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="ImageJ Plugin" default="deploy">
+
+    <property file="plugin.properties" />
+
+    <property name="dist.dir" location="dist" />
+    <property name="build.dir" location="build/classes" />
+
+    <target name="init">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+    </target>
+
+    <path id="compile.classpath">
+        <fileset dir="${lib.folder}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="compile" depends="init">
+        <javac srcdir="src/main/java" destdir="${build.dir}" includeantruntime="false">
+            <classpath refid="compile.classpath" />
+        </javac>
+    </target>
+
+    <target name="archive" depends="compile">
+        <copy todir="${build.dir}" file="plugins.config" />
+
+        <jar destfile="${dist.dir}/${plugin.jar}" basedir="${build.dir}" compress="true" />
+    </target>
+
+    <target name="deploy" depends="archive">
+        <copy todir="${imagej.root}/plugins" overwrite="true" file="${dist.dir}/${plugin.jar}" />
+    </target>
+
+    <target name="clean" depends="init">
+        <delete dir="build" />
+        <delete dir="dist" />
+    </target>
+
+</project>
